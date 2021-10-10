@@ -1,11 +1,14 @@
 var iron, ironImg;
 var bg, backgroundImg;
 var stoneGroup, stoneImg;
+var diamond, diamondGroup, diamondImage;
+var diamondScore=0;
 
 function preload() {
   backgroundImg = loadImage("images/bg.jpg");
   ironImg= loadImage("images/iron.png");
-  stoneImg=loadImage("images/stone.png")
+  stoneImg=loadImage("images/stone.png");
+  diamondImage= loadImage("images/diamond.png");
 
  
  
@@ -24,6 +27,7 @@ function setup() {
  
   ground.visible = false;
   stoneGroup=new Group()
+  diamondGroup=new Group()
 }
 
 function draw() {
@@ -51,9 +55,25 @@ function draw() {
     }
       
   }
+   generateDiamond()
+   for(var i = 0 ; i< (diamondGroup).length ;i++){
+    var temp = (diamondGroup).get(i) ;
+    
+    if (temp.isTouching(iron)) {
+      
+      diamondScore++;
+      temp.destroy();
+      temp=null;
+      }
+        
+    }
+
 
     
     drawSprites();
+    textSize(20);
+  fill("white")
+  text("Diamonds Collected: "+ diamondScore, 500,50);
    
 }
 function generateStones(){
@@ -67,4 +87,16 @@ function generateStones(){
     stone.lifetime =250;
     stoneGroup.add(stone);
   }
+}
+function generateDiamond(){
+  if (frameCount % 70 === 0) {
+    var diamond = createSprite(1200,120,40,10);
+    diamond.x = random(50,450);
+    diamond.addImage(diamondImage);
+    diamond.scale = 0.5;
+    diamond.velocityY = 5;
+    
+    diamond.lifetime =250;
+    diamondGroup.add(diamond);
+}
 }
