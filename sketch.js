@@ -1,3 +1,4 @@
+//global variables
 var iron, ironImg;
 var bg, backgroundImg;
 var stoneGroup, stoneImg;
@@ -5,7 +6,7 @@ var diamond, diamondGroup, diamondImage;
 var diamondScore=0;
 var spike, spikesGroup, spikesImage;
 
-
+//definition of function preload to load the game assets
 function preload() {
   backgroundImg = loadImage("images/bg.jpg");
   ironImg= loadImage("images/iron.png");
@@ -20,9 +21,11 @@ function preload() {
 
 function setup() {
   createCanvas(1000, 600);
+  
   bg = createSprite(580,300);
   bg.addImage(backgroundImg);
   bg.scale=2
+  //make bg move
   bg.velocityY=-5
   iron = createSprite(200,505,20,50);
   iron.addImage(ironImg);
@@ -30,54 +33,66 @@ function setup() {
   ground = createSprite(200,585,1200,10);
  
   ground.visible = false;
+  //new groups
   stoneGroup=new Group()
   diamondGroup=new Group()
   spikesGroup= new Group()
 }
 
 function draw() {
+  //jump on space
   if(keyDown("space") ) {
     iron.velocityY = -16;
   }
+  //prevent iron man from moving out of the canvas
   if(iron.y<50){
     iron.y=50;
   }
   if(bg.y<200)
   bg.y=bg.width/4
-
+//iron man movements
   iron.velocityY = iron.velocityY + 0.5;
+  //move left
   if(keyDown("left") )
   iron.x -=5
+  //move right
   if(keyDown("right") )
   iron.x +=5
   iron.collide(ground);
+  //call function to generate stones
  generateStones();
  for(var i = 0 ; i< (stoneGroup).length ;i++){
   var temp = (stoneGroup).get(i) ;
-  
+  //to make iron man collide with stone
   if (temp.isTouching(iron)) {
      iron.collide(temp);
     }
       
   }
+  //call out function to generate diamond
    generateDiamond()
+   //to catch the diamond
    for(var i = 0 ; i< (diamondGroup).length ;i++){
     var temp = (diamondGroup).get(i) ;
     
     if (temp.isTouching(iron)) {
-      
+      //increase score when diamond is caught
       diamondScore++;
+      //destroy diamond when it is caught
       temp.destroy();
       temp=null;
       }
         
     }
+    //call function to generate spikes
     generateSpikes()
     for(var i = 0 ; i< (spikesGroup).length ;i++){
       var temp = (spikesGroup).get(i) ;
-      
+      //to make iron man collide with spikes
       if (temp.isTouching(iron)) {
+        //decrease score when colliding with spikes
         diamondScore=diamondScore-5;
+//destroy spikes when collided
         temp.destroy();
         temp=null;
         }
@@ -90,6 +105,7 @@ function draw() {
     drawSprites();
     textSize(20);
   fill("white")
+  //to display score
   text("Diamonds Collected: "+ diamondScore, 500,50);
    
 }
