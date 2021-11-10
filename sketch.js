@@ -5,6 +5,7 @@ var stoneGroup, stoneImg;
 var diamond, diamondGroup, diamondImage;
 var diamondScore=0;
 var spike, spikesGroup, spikesImage;
+var gameState= "PLAY";
 
 //definition of function preload to load the game assets
 function preload() {
@@ -13,6 +14,7 @@ function preload() {
   stoneImg=loadImage("images/stone.png");
   diamondImage= loadImage("images/diamond.png");
   spikesImage= loadImage("images/spikes.png");
+  restartImage= loadImage("images/restart.png");
 
 
  
@@ -26,7 +28,7 @@ function setup() {
   bg.addImage(backgroundImg);
   bg.scale=2
   //make bg move
-  bg.velocityY=-5
+  
   iron = createSprite(200,505,20,50);
   iron.addImage(ironImg);
   iron.scale= 0.5
@@ -37,9 +39,17 @@ function setup() {
   stoneGroup=new Group()
   diamondGroup=new Group()
   spikesGroup= new Group()
+  restart = createSprite(500,300);
+  restart.addImage(restartImage);
+  restart.visible= false;
+
 }
 
 function draw() {
+  if(gameState=== "PLAY"){
+    bg.velocityY=-5
+  
+  iron.setCollider("rectangle",0,0,200,500);
   //jump on space
   if(keyDown("space") ) {
     iron.velocityY = -16;
@@ -67,6 +77,7 @@ function draw() {
   if (temp.isTouching(iron)) {
      iron.collide(temp);
     }
+
       
   }
   //call out function to generate diamond
@@ -96,7 +107,27 @@ function draw() {
         temp.destroy();
         temp=null;
         }
-          
+      }
+        if(diamondScore<=-10 || iron.y>610){
+          gameState="END";
+        }
+     
+      }
+      if(gameState==="END"){
+        bg.velocityY=0;
+        iron.velocityY=0;
+        diamondGroup.setVelocityEach(0);
+        spikesGroup.setVelocityEach(0);
+        stoneGroup.setVelocityEach(0);
+        diamondGroup.setLifetimeEach(-1);
+        spikesGroup.setLifetimeEach(-1);
+        stoneGroup.setLifetimeEach(-1);
+
+        restart.visible= true;
+        if(mousePressedOver (restart)){
+          restartGame();
+        }
+        
       }
       
 
@@ -143,6 +174,16 @@ function generateSpikes(){
     spike.lifetime = 600;
     spikesGroup.add(spike);
   }
+}
+function restartGame(){
+  gameState= "PLAY";
+  stoneGroup.destroyEach();
+  spikesGroup.destroyEach();
+  diamondGroup.destroyEach();
+  diamondScore=0;
+
+  iron.y=50;
+  restart.visible= false;
 }
       
 
